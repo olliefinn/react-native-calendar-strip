@@ -1,5 +1,5 @@
 {
-  "name": "react-native-calendar-strip",
+  "name": "react-native-scrollable-calendar-strip",
   "description": "Easy to use and visually stunning calendar component for React Native",
   "author": "Bogdan Begovic <bogdanbegovic@gmail.com>",
   "contributors": [
@@ -12,15 +12,15 @@
     "Ollie Finn (https://github.com/olliefinn)"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/olliefinn/react-native-calendar-strip#readme",
+  "homepage": "https://github.com/olliefinn/react-native-scrollable-calendar-strip#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/olliefinn/react-native-calendar-strip.git"
+    "url": "git+https://github.com/olliefinn/react-native-scrollable-calendar-strip.git"
   },
   "bugs": {
-    "url": "https://github.com/olliefinn/react-native-calendar-strip/issues"
+    "url": "https://github.com/olliefinn/react-native-scrollable-calendar-strip/issues"
   },
-  "version": "2.0.10",
+  "version": "2.0.11",
   "main": "index.js",
   "directories": {
     "example": "example"
@@ -75,6 +75,7 @@
     "react-native",
     "react-native-calendar",
     "react-native-calendar-strip",
+    "react-native-scrollable-calendar-strip",
     "rn",
     "strip"
   ],
