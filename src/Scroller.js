@@ -99,7 +99,7 @@ export default class CalendarScroller extends Component {
     if (this.state.visibleStartIndex === index) {
       return;
     }
-    this.rlv.scrollToIndex(newIndex, true);
+    this.rlv.scrollToIndex(index, true);
   }
 
   // Scroll left, guarding against start index.
