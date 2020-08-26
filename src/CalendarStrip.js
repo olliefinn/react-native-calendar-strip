@@ -208,6 +208,18 @@ class CalendarStrip extends Component {
     }
   }
 
+  scrollToInitialIndex = () => {
+    if (this.props.scrollable && this.state.initialScrollerIndex) {
+      this.scroller.scrollToIndex(this.state.initialScrollerIndex + 7);
+    }
+  }
+
+  scrollToInitialIndexWithWeekOffset = (weekOffset) => {
+    if (this.props.scrollable && this.state.initialScrollerIndex) {
+      this.scroller.scrollToIndex(this.state.initialScrollerIndex + (7 * weekOffset));
+    }
+  }
+
   //Set startingDate to the previous week
   getPreviousWeek = () => {
     if (this.props.scrollable) {
