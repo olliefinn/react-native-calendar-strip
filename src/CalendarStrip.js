@@ -210,7 +210,7 @@ class CalendarStrip extends Component {
 
   scrollToInitialIndex = () => {
     if (this.props.scrollable && this.state.initialScrollerIndex) {
-      this.scroller.scrollToIndex(this.state.initialScrollerIndex + 7);
+      this.scroller.scrollToIndex(this.state.initialScrollerIndex);
     }
   }
 
