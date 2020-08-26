@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/olliefinn/react-native-scrollable-calendar-strip/issues"
   },
-  "version": "2.0.12",
+  "version": "2.0.13",
   "main": "index.js",
   "directories": {
     "example": "example"
