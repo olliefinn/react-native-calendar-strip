@@ -22,6 +22,7 @@ export default class CalendarScroller extends Component {
     maxSimultaneousDays: PropTypes.number,
     updateMonthYear: PropTypes.func,
     onWeekChanged: PropTypes.func,
+    externalScrollView: PropTypes.func
   }
 
   static defaultProps = {
@@ -121,6 +122,29 @@ export default class CalendarScroller extends Component {
     this.rlv.scrollToIndex(newIndex, true);
   }
 
+  // Scroll to given date, and check against min and max date if available.
+  scrollToDate = (date) => {
+    let targetDate = moment(date);
+    const {
+      minDate,
+      maxDate,
+    } = this.props;
+
+    // Falls back to min or max date when the given date exceeds the available dates
+    if (minDate && targetDate.isBefore(minDate, "day")) {
+      targetDate = minDate;
+    } else if (maxDate && targetDate.isAfter(maxDate, "day")) {
+      targetDate = maxDate;
+    }
+
+    for (let i = 0; i < this.state.data.length; i++) {
+      if (this.state.data[i].date.isSame(targetDate, "day")) {
+        this.rlv.scrollToIndex(i, true);
+        break;
+      }
+    }
+  }
+
   // Shift dates when end of list is reached.
   shiftDaysForward = (visibleStartDate = this.state.visibleStartDate) => {
     const prevVisStart = visibleStartDate.clone();
@@ -191,9 +215,9 @@ export default class CalendarScroller extends Component {
       visibleEndDate: _visEndDate,
     } = this.state;
     const visibleStartIndex = all[0];
-    const visibleStartDate = data[visibleStartIndex].date;
+    const visibleStartDate = data[visibleStartIndex] ? data[visibleStartIndex].date : moment();
     const visibleEndIndex = Math.min(visibleStartIndex + numVisibleItems - 1, data.length - 1);
-    const visibleEndDate = data[visibleEndIndex].date;
+    const visibleEndDate = data[visibleEndIndex] ? data[visibleEndIndex].date : moment();
 
     const {
       updateMonthYear,
@@ -265,6 +289,7 @@ export default class CalendarScroller extends Component {
           initialRenderIndex={this.props.initialRenderIndex}
           onVisibleIndicesChanged={this.onVisibleIndicesChanged}
           isHorizontal
+          externalScrollView={this.props.externalScrollView}
           scrollViewProps={{
             showsHorizontalScrollIndicator: false,
             contentContainerStyle: {paddingRight: this.state.itemWidth / 2},

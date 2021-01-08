@@ -28,6 +28,7 @@ class CalendarDay extends Component {
 
     dateNameStyle: PropTypes.any,
     dateNumberStyle: PropTypes.any,
+    dayContainerStyle: PropTypes.any,
     weekendDateNameStyle: PropTypes.any,
     weekendDateNumberStyle: PropTypes.any,
     highlightDateNameStyle: PropTypes.any,
@@ -354,6 +355,7 @@ class CalendarDay extends Component {
       date,
       dateNameStyle,
       dateNumberStyle,
+      dayContainerStyle,
       disabledDateNameStyle,
       disabledDateNumberStyle,
       disabledDateOpacity,
@@ -386,11 +388,15 @@ class CalendarDay extends Component {
     let _dateViewStyle = enabled
       ? [{ backgroundColor: "transparent" }]
       : [{ opacity: disabledDateOpacity }];
+    let _customHighlightDateNameStyle;
+    let _customHighlightDateNumberStyle;
 
     if (customStyle) {
       _dateNameStyle.push(customStyle.dateNameStyle);
       _dateNumberStyle.push(customStyle.dateNumberStyle);
       _dateViewStyle.push(customStyle.dateContainerStyle);
+      _customHighlightDateNameStyle = customStyle.highlightDateNameStyle;
+      _customHighlightDateNumberStyle = customStyle.highlightDateNumberStyle;
     }
     if (enabled && selected) {
       // Enabled state
@@ -427,10 +433,15 @@ class CalendarDay extends Component {
         ];
       }
       if (selected) {
-        _dateNameStyle = [styles.dateName, highlightDateNameStyle];
+        _dateNameStyle = [
+          styles.dateName,
+          highlightDateNameStyle,
+          _customHighlightDateNameStyle
+        ];
         _dateNumberStyle = [
           styles.dateNumber,
-          highlightDateNumberStyle
+          highlightDateNumberStyle,
+          _customHighlightDateNumberStyle
         ];
       }
     }
@@ -455,7 +466,8 @@ class CalendarDay extends Component {
             style={[
               styles.dateContainer,
               responsiveDateContainerStyle,
-              _dateViewStyle
+              _dateViewStyle,
+              dayContainerStyle
             ]}
           >
             {showDayName && (
