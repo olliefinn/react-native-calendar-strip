@@ -6,7 +6,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { View, Animated, PixelRatio } from "react-native";
 
-import moment from "moment";
+import { getMoment, updateLocale } from "./utils/dates";
 
 import CalendarHeader from "./CalendarHeader";
 import CalendarDay from "./CalendarDay";
@@ -87,7 +87,9 @@ class CalendarStrip extends Component {
 
     locale: PropTypes.object,
     shouldAllowFontScaling: PropTypes.bool,
-    useNativeDriver: PropTypes.bool
+    useNativeDriver: PropTypes.bool,
+
+    timezone: PropTypes.string
   };
 
   static defaultProps = {
@@ -112,6 +114,7 @@ class CalendarStrip extends Component {
     markedDates: [],
     useNativeDriver: true,
     scrollToOnSetSelectedDate: true,
+    timezone: null,
   };
 
   constructor(props) {
@@ -120,7 +123,7 @@ class CalendarStrip extends Component {
 
     if (props.locale) {
       if (props.locale.name && props.locale.config) {
-        moment.updateLocale(props.locale.name, props.locale.config);
+        updateLocale(props.locale.name, props.locale.config);
       } else {
         throw new Error(
           "Locale prop is not in the correct format. \b Locale has to be in form of object, with params NAME and CONFIG!"
@@ -190,7 +193,7 @@ class CalendarStrip extends Component {
   compareDates = (date1, date2) => {
     if (date1 && date1.valueOf && date2 && date2.valueOf)
     {
-      return moment(date1).isSame(date2, "day");
+      return getMoment(date1, this.props.timezone).isSame(date2, "day");
     } else {
       return JSON.stringify(date1) === JSON.stringify(date2);
     }
@@ -198,7 +201,7 @@ class CalendarStrip extends Component {
 
   //Function that checks if the locale is passed to the component and sets it to the passed date
   setLocale = date => {
-    let _date = date && moment(date);
+    let _date = date && getMoment(date, this.props.timezone);
     if (_date) {
       _date.set({ hour: 12}); // keep date the same regardless of timezone shifts
       if (this.props.locale) {
@@ -214,7 +217,7 @@ class CalendarStrip extends Component {
     } else {
       // Fallback when startingDate isn't provided. However selectedDate
       // may also be undefined, defaulting to today's date.
-      let date = this.setLocale(moment(this.props.selectedDate));
+      let date = this.setLocale(getMoment(this.props.selectedDate, this.props.timezone));
       return this.props.useIsoWeekday ? date.startOf("isoweek") : date;
     }
   }
@@ -261,7 +264,7 @@ class CalendarStrip extends Component {
     if (!this.props.updateWeek) {
       return originalStartDate;
     }
-    let startingDate = moment(newStartDate).startOf("day");
+    let startingDate = getMoment(newStartDate, this.props.timezone).startOf("day");
     let daysDiff = startingDate.diff(originalStartDate.startOf("day"), "days");
     if (daysDiff === 0) {
       return originalStartDate;
@@ -285,7 +288,7 @@ class CalendarStrip extends Component {
     }
 
     this.animations = [];
-    let startingDate = moment(date);
+    let startingDate = getMoment(date, this.props.timezone);
     startingDate = this.props.useIsoWeekday ? startingDate.startOf("isoweek") : startingDate;
     const days = this.createDays(startingDate);
     this.setState({startingDate, ...days});
@@ -318,11 +321,11 @@ class CalendarStrip extends Component {
 
   // Set the selected date.  To clear the currently selected date, pass in 0.
   setSelectedDate = date => {
-    let mDate = moment(date);
+    let mDate = getMoment(date, this.props.timezone);
     this.onDateSelected(mDate);
     if (this.props.scrollToOnSetSelectedDate) {
       // Scroll to selected date, centered in the week
-      const scrolledDate = moment(mDate);
+      const scrolledDate = getMoment(mDate, this.props.timezone);
       scrolledDate.subtract(Math.floor(this.props.numDaysInWeek / 2), "days");
       this.scroller.scrollToDate(scrolledDate);
     }
@@ -464,7 +467,7 @@ class CalendarStrip extends Component {
       // Center start date in scroller.
       _startingDate = startingDate.clone().subtract(numDays/2, "days");
       if (minDate && _startingDate.isBefore(minDate, "day")) {
-        _startingDate = moment(minDate);
+        _startingDate = getMoment(minDate, this.props.timezone);
       }
     }
 
@@ -553,6 +556,7 @@ class CalendarStrip extends Component {
           updateMonthYear={this.updateMonthYear}
           onWeekChanged={this.props.onWeekChanged}
           externalScrollView={this.props.externalScrollView}
+          timezone={this.props.timezone}
         />
       );
     }
@@ -588,6 +592,7 @@ class CalendarStrip extends Component {
               weekStartDate={this.state.weekStartDate}
               weekEndDate={this.state.weekEndDate}
               size={this.state.selectorSize}
+              timezone={this.props.timezone}
             />
 
             <View onLayout={this.onLayout} style={styles.calendarDates}>

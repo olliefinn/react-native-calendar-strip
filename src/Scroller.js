@@ -9,7 +9,8 @@ import React, { Component } from "react";
 import { View } from "react-native";
 import PropTypes from "prop-types";
 import { RecyclerListView, DataProvider, LayoutProvider } from "recyclerlistview";
-import moment from "moment";
+
+import { getMoment } from "./utils/dates";
 
 export default class CalendarScroller extends Component {
   static propTypes = {
@@ -22,12 +23,14 @@ export default class CalendarScroller extends Component {
     maxSimultaneousDays: PropTypes.number,
     updateMonthYear: PropTypes.func,
     onWeekChanged: PropTypes.func,
-    externalScrollView: PropTypes.func
+    externalScrollView: PropTypes.func,
+    timezone: PropTypes.string
   }
 
   static defaultProps = {
     data: [],
     renderDayParams: {},
+    timezone: null,
   };
 
   constructor(props) {
@@ -124,7 +127,7 @@ export default class CalendarScroller extends Component {
 
   // Scroll to given date, and check against min and max date if available.
   scrollToDate = (date) => {
-    let targetDate = moment(date);
+    let targetDate = getMoment(date, this.props.timezone);
     const {
       minDate,
       maxDate,
@@ -170,7 +173,7 @@ export default class CalendarScroller extends Component {
     const data = [];
     let _newStartDate = newStartDate;
     if (minDate && newStartDate.isBefore(minDate, "day")) {
-      _newStartDate = moment(minDate);
+      _newStartDate = getMoment(minDate, this.props.timezone);
     }
     for (let i = 0; i < this.state.numDays; i++) {
       let date = _newStartDate.clone().add(i, "days");
@@ -215,9 +218,9 @@ export default class CalendarScroller extends Component {
       visibleEndDate: _visEndDate,
     } = this.state;
     const visibleStartIndex = all[0];
-    const visibleStartDate = data[visibleStartIndex] ? data[visibleStartIndex].date : moment();
+    const visibleStartDate = data[visibleStartIndex] ? data[visibleStartIndex].date : getMoment();
     const visibleEndIndex = Math.min(visibleStartIndex + numVisibleItems - 1, data.length - 1);
-    const visibleEndDate = data[visibleEndIndex] ? data[visibleEndIndex].date : moment();
+    const visibleEndDate = data[visibleEndIndex] ? data[visibleEndIndex].date : getMoment();
 
     const {
       updateMonthYear,

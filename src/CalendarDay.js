@@ -4,7 +4,8 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import moment from "moment";
+
+import { getMoment } from "./utils/dates";
 
 import { Text, View, Animated, Easing, LayoutAnimation, TouchableOpacity } from "react-native";
 import styles from "./Calendar.style.js";
@@ -46,6 +47,7 @@ class CalendarDay extends Component {
     daySelectionAnimation: PropTypes.object,
     useNativeDriver: PropTypes.bool,
     scrollable: PropTypes.bool,
+    timezone: PropTypes.string,
   };
 
   // Reference: https://medium.com/@Jpoliachik/react-native-s-layoutanimation-is-awesome-4a4d317afd3e
@@ -63,7 +65,8 @@ class CalendarDay extends Component {
     },
     styleWeekend: true,
     showDayName: true,
-    showDayNumber: true
+    showDayNumber: true,
+    timezone: null
   };
 
   constructor(props) {
@@ -241,7 +244,7 @@ class CalendarDay extends Component {
       if (markedDates.length === 0) {
         return {};
       }
-      return markedDates.find(md => moment(day).isSame(md.date, "day")) || {};
+      return markedDates.find(md => getMoment(day, this.props.timezone).isSame(md.date, "day")) || {};
     } else if (markedDates instanceof Function) {
       return markedDates(day) || {};
     }

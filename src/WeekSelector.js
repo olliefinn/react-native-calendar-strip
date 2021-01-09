@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Image, TouchableOpacity } from "react-native";
 
-import moment from "moment";
+import { getMoment } from "./utils/dates";
 
 import styles from "./Calendar.style.js";
 
@@ -27,7 +27,8 @@ class WeekSelector extends Component {
     size: PropTypes.number,
     onPress: PropTypes.func,
     weekStartDate: PropTypes.object,
-    weekEndDate: PropTypes.object
+    weekEndDate: PropTypes.object,
+    timezone: PropTypes.string
   };
 
   shouldComponentUpdate(nextProps) {
@@ -46,7 +47,7 @@ class WeekSelector extends Component {
 
   isEnabled(controlDate, weekStartDate, weekEndDate) {
     if (controlDate) {
-      return !moment(controlDate).isBetween(
+      return !getMoment(controlDate, this.props.timezone).isBetween(
         weekStartDate,
         weekEndDate,
         "day",
